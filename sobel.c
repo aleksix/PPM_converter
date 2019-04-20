@@ -5,7 +5,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-#include "ppm_2_pgm.h"
+#include "pam_converters.h"
 
 int kernelx[3][3] = {
         {-1, 0, 1},

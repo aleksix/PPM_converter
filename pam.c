@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 
 #include "pam.h"
 
@@ -22,7 +23,6 @@ void init_pam_image(pam *pam, const unsigned int width, const unsigned int heigh
         pam->bpp = 3;
     pam->image = calloc(pam->height, sizeof(unsigned char *));
     for (int c = 0; c < pam->height; ++c) {
-        // TODO: Handle ASCII
         pam->image[c] = calloc(pam->width * pam->bpp, sizeof(unsigned char));
     }
 }
@@ -72,17 +72,22 @@ unsigned short read_ushort(const int file_descriptor) {
     return (unsigned short) read_number(file_descriptor, 5);
 }
 
-int read_pam(const char *filename, pam *pam) {
+unsigned char read_uchar(const int file_descriptor) {
+    // 3 is the length of the minimum UCHAR_MAX
+    return (unsigned char) read_number(file_descriptor, 3);
+}
+
+int read_pam(const char *filename, pam *out) {
     int fd = open(filename, O_RDONLY);
 
     if (fd == -1)
         return 0;
 
     char magic[2];
-    unsigned char type;
+    unsigned char type = PBM;
     unsigned int width;
     unsigned int height;
-    unsigned char maxval;
+    unsigned char maxval = 1;
     int error;
 
     error = read(fd, magic, 2);
@@ -101,15 +106,43 @@ int read_pam(const char *filename, pam *pam) {
     skip_whitespace(fd, 1);
     height = read_uint(fd);
 
-    skip_whitespace(fd, 1);
-    maxval = read_ushort(fd);
+    if (type != PBM && type != PBM_BINARY) {
+        skip_whitespace(fd, 1);
+        maxval = read_ushort(fd);
+    }
 
-    init_pam(pam, type, maxval, width, height);
-    for (int c = 0; c < pam->height; ++c) {
-        // TODO: ASCII FORMAT READING
-        error = read(fd, pam->image[c], pam->width * pam->bpp);
-        if (error == 0)
-            return 0;
+    init_pam(out, type, maxval, width, height);
+    if (out->type == PBM_BINARY || out->type == PGM_BINARY || out->type == PPM_BINARY) {
+        if (out->type == PBM_BINARY)
+            init_pam_image(out, ceil(width / 8), height);
+        for (unsigned int y = 0; y < out->height; ++y) {
+            error = read(fd, out->image[y], out->width * out->bpp);
+            if (error == 0)
+                return 0;
+        }
+    } else if (out->type == PBM) {
+        // PBM and PBM_BINARY are consistent in their representation - 1 value/8 pixels
+        unsigned char value = 0;
+        init_pam_image(out, ceil(width / 8), height);
+        for (unsigned int y = 0; y < out->height; ++y) {
+            for (unsigned int x = 0; x < width; ++x) {
+                skip_whitespace(fd, 1);
+                if (x > 0 && x % 8 == 0) {
+                    out->image[y][(x - 1) / 8] = value;
+                    value = 0;
+                }
+                value = value << 1 | read_uchar(fd);
+            }
+            out->image[y][out->width - 1] = value;
+            value = 0;
+        }
+    } else {
+        for (unsigned int y = 0; y < out->height; ++y) {
+            for (unsigned int x = 0; x < width; ++x) {
+                skip_whitespace(fd, 1);
+                out->image[y][x] = read_uchar(fd);
+            }
+        }
     }
 
     close(fd);

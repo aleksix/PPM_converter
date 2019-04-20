@@ -6,7 +6,7 @@
 #include <errno.h>
 
 #include "pam.h"
-#include "ppm_2_pgm.h"
+#include "pam_converters.h"
 #include "sobel.h"
 
 int display_usage(const char *error) {

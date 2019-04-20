@@ -34,7 +34,7 @@ void init_pam(pam *pam, const pam_type type, const unsigned char maxval, const u
 
 void init_pam_image(pam *pam, const unsigned int width, const unsigned int height);
 
-int read_pam(const char *filename, pam *pam);
+int read_pam(const char *filename, pam *out);
 
 int save_pam(const char *filename, const pam *pam);
 
