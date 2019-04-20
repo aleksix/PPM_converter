@@ -1,5 +1,5 @@
 CC=gcc
-CFFLAGS = -c -Wall -O3
+CFLAGS = -c -Wall -O3 -I.
 LDFLAGS = -lm -lpthread
 
 EXECUTABLE = ppm_converter
@@ -11,7 +11,7 @@ HEADERS = pam.h pam_converters.h sobel.h
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXECUTABLE) LFLAGS
+	$(CC) $(OBJECTS) -o $(EXECUTABLE) $(LFLAGS)
 
 main.o: main.c
 	$(CC) $(CFLAGS) main.c
