@@ -89,10 +89,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Transform images to greyscale if they are not already grayscale
-    if (in.type != PGM && in.type != PGM_BINARY)
-        convert_2_pgm(&in, &greyscale);
-    else
-        greyscale = in;
+    convert_2_pgm(&in, &greyscale);
 
     // Call the sobel and calculate the time taken
     clock_gettime(CLOCK_REALTIME, &start);
@@ -106,14 +103,14 @@ int main(int argc, char *argv[]) {
         nanoseconds += 1000000000;
         --seconds;
     }
+    // Decimals not used for more precise comparisons
     printf("Sobel algorithm took %li seconds and %li nanoseconds\n", seconds, nanoseconds);
 
     // Output the image
     save_pam(out_file, &sobel_out);
 
     // Release the resources
-    if (in.image != greyscale.image)
-        free_pam(&greyscale);
+    free_pam(&greyscale);
     free_pam(&in);
     free_pam(&sobel_out);
     return 0;

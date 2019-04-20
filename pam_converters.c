@@ -10,10 +10,13 @@ int ppm_2_pgm(pam *in, pam *out) {
     for (unsigned int y = 0; y < in->height; ++y) {
         unsigned int x_out = 0;
         for (unsigned int x_in = 0; x_in < in->width * in->bpp; x_in += 3, ++x_out) {
+            // Luminosity algorithm
             out->image[y][x_out] =
                     0.2126 * in->image[y][x_in] + 0.7152 * in->image[y][x_in + 1] + 0.0722 * in->image[y][x_in + 2];
         }
     }
+
+    return 1;
 }
 
 int pbm_2_pgm(pam *in, pam *out) {
