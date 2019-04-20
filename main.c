@@ -46,7 +46,6 @@ int main(int argc, char *argv[]) {
         switch (opt) {
             case 'h':
                 return display_usage(NULL);
-                break;
             case 'i':
                 in_file = optarg;
                 break;
@@ -58,7 +57,6 @@ int main(int argc, char *argv[]) {
                 break;
             default:
                 return display_usage("Unknown error during argument passing");
-                break;
         }
         opt = getopt_long(argc, argv, "hi:o:t:", options, &long_opt_index);
     }
