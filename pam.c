@@ -151,5 +151,6 @@ void free_pam(pam *pam) {
             free(pam->image[c]);
         }
         free(pam->image);
+        pam->image = NULL;
     }
 }
