@@ -90,14 +90,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    if (in.type == PBM || in.type == PBM_BINARY) {
-        printf("PBM files not supported yet\n");
-        return 1;
-    }
-
-    // Transform images to greyscale if they are colored
-    if (in.type == PPM || in.type == PPM_BINARY)
-        ppm_2_pgm(&in, &greyscale);
+    // Transform images to greyscale if they are not already grayscale
+    if (in.type != PGM && in.type != PGM_BINARY)
+        convert_2_pgm(&in, &greyscale);
     else
         greyscale = in;
 
