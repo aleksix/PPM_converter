@@ -8,22 +8,23 @@
 
 #include "pam.h"
 
-void init_pam(pam *pam, const pam_type type, const unsigned char maxval, const unsigned int width,
+void init_pam(pam *out, const pam_type type, const unsigned char maxval, const unsigned int width,
               const unsigned int height) {
-    pam->type = type;
-    pam->maxval = maxval;
-    init_pam_image(pam, width, height);
+    out->type = type;
+    out->maxval = maxval;
+    init_pam_image(out, width, height);
 }
 
-void init_pam_image(pam *pam, const unsigned int width, const unsigned int height) {
-    pam->width = width;
-    pam->height = height;
-    pam->bpp = 1;
-    if (pam->type == PPM || pam->type == PPM_BINARY)
-        pam->bpp = 3;
-    pam->image = calloc(pam->height, sizeof(unsigned char *));
-    for (int c = 0; c < pam->height; ++c) {
-        pam->image[c] = calloc(pam->width * pam->bpp, sizeof(unsigned char));
+void init_pam_image(pam *out, const unsigned int width, const unsigned int height) {
+    out->width = width;
+    out->height = height;
+    out->bpp = 1;
+    if (out->type == PPM || out->type == PPM_BINARY)
+        out->bpp = 3;   // RGB - one byte per channel
+
+    out->image = calloc(out->height, sizeof(unsigned char *));
+    for (int c = 0; c < out->height; ++c) {
+        out->image[c] = calloc(out->width * out->bpp, sizeof(unsigned char));
     }
 }
 
@@ -38,7 +39,6 @@ void skip_whitespace(const int file_descriptor, const unsigned skip_comments) {
     lseek(file_descriptor, -1, SEEK_CUR);
 }
 
-// TODO: according to http://netpbm.sourceforge.net/doc/pbm.html a comment can appear in the middle of a token. Handle it.
 unsigned long read_number(const int file_descriptor, unsigned int max_length) {
     char c;
 
@@ -49,6 +49,12 @@ unsigned long read_number(const int file_descriptor, unsigned int max_length) {
     do {
         // Read a single byte
         read(file_descriptor, &c, 1);
+        // NOTE: according to http://netpbm.sourceforge.net/doc/pbm.html a comment can appear in the middle of a token.
+        if (c == '#') {
+            lseek(file_descriptor, -1, SEEK_CUR);
+            skip_whitespace(file_descriptor, 1);
+            continue;
+        }
         if (!isspace(c)) {
             buf[counter++] = c;
         }
@@ -168,7 +174,7 @@ int copy(pam *in, pam *out, unsigned int force_copy, unsigned int offset_x, unsi
     }
 }
 
-int save_pam(const char *filename, const pam *pam) {
+int save_pam(const char *filename, const pam *out) {
     int fd = open(filename, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IROTH);
     if (fd == -1)
         return 0;
@@ -176,33 +182,33 @@ int save_pam(const char *filename, const pam *pam) {
     char buf[12];
 
     write(fd, "P", 1);
-    sprintf(buf, "%d ", pam->type);
+    sprintf(buf, "%d ", out->type);
     write(fd, buf, strlen(buf));
 
-    sprintf(buf, "%d ", pam->width);
+    sprintf(buf, "%d ", out->width);
     write(fd, buf, strlen(buf));
 
-    sprintf(buf, "%d ", pam->height);
+    sprintf(buf, "%d ", out->height);
     write(fd, buf, strlen(buf));
 
-    sprintf(buf, "%d\n", pam->maxval);
+    sprintf(buf, "%d\n", out->maxval);
     write(fd, buf, strlen(buf));
 
-    for (unsigned int c = 0; c < pam->height; ++c) {
+    for (unsigned int c = 0; c < out->height; ++c) {
         // TODO: HANDLE ASCII PRINTING
-        write(fd, pam->image[c], pam->width * pam->bpp);
+        write(fd, out->image[c], out->width * out->bpp);
     }
 
     close(fd);
     return 1;
 }
 
-void free_pam(pam *pam) {
-    if (pam->image != NULL) {
-        for (unsigned int c = 0; c < pam->height; ++c) {
-            free(pam->image[c]);
+void free_pam(pam *out) {
+    if (out->image != NULL) {
+        for (unsigned int c = 0; c < out->height; ++c) {
+            free(out->image[c]);
         }
-        free(pam->image);
-        pam->image = NULL;
+        free(out->image);
+        out->image = NULL;
     }
 }
