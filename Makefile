@@ -11,7 +11,7 @@ HEADERS = pam.h pam_converters.h sobel.h
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXECUTABLE) $(LFLAGS)
+	$(CC) $(OBJECTS) -o $(EXECUTABLE) $(LDFLAGS)
 
 main.o: main.c
 	$(CC) $(CFLAGS) main.c
@@ -25,5 +25,6 @@ pam_converters.o: pam_converters.c
 sobel.o: sobel.c
 	$(CC) $(CFLAGS) sobel.c
 
+.PHONY: clean
 clean:
 	rm -rf $(OBJECTS) $(EXECUTABLE)
