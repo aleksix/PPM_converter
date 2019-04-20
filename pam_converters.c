@@ -26,7 +26,7 @@ int pbm_2_pgm(pam *in, pam *out) {
     for (unsigned int y = 0; y < in->height; ++y) {
         for (unsigned int x_in = 0; x_in < in->width; ++x_in) {
             for (unsigned int x_out = 0; x_out < 8; ++x_out) {
-                out->image[y][x_out + 8 * x_in] = in->image[y][x_in] & (1 << x_in);
+                out->image[y][x_out + 8 * x_in] = ((in->image[y][x_in] & (128 >> x_out)) > 1) * 255;
             }
         }
     }
