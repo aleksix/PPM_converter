@@ -1,10 +1,9 @@
-#include <stdio.h>
+#include <unistd.h>
 #include "pam.h"
 #include "ppm_2_pgm.h"
 #include "sobel.h"
 
 int main() {
-    printf("Hello, World!\n");
     pam in = {0};
     pam out = {0};
     pam sobel_out = {0};

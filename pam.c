@@ -17,10 +17,10 @@ void init_pam(pam *pam, const pam_type type, const unsigned char maxval, const u
 void init_pam_image(pam *pam, const unsigned int width, const unsigned int height) {
     pam->width = width;
     pam->height = height;
-    pam->image = calloc(pam->height, sizeof(unsigned char *));
     pam->bpp = 1;
     if (pam->type == PPM || pam->type == PPM_BINARY)
         pam->bpp = 3;
+    pam->image = calloc(pam->height, sizeof(unsigned char *));
     for (int c = 0; c < pam->height; ++c) {
         // TODO: Handle ASCII
         pam->image[c] = calloc(pam->width * pam->bpp, sizeof(unsigned char));
