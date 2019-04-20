@@ -21,8 +21,7 @@ int kernel_y[3][3] = {
 		{-1, 2,  1}
 };
 
-typedef struct
-{
+typedef struct {
 	// Padded image
 	pam *padded;
 	// Output address
