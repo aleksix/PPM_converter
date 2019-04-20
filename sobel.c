@@ -114,7 +114,7 @@ void sobel(pam *in, pam *out, unsigned short n_threads)
 	sobel_input *inputs;
 
 	// Thread input parameters
-	unsigned int length = out->height * out->width;
+	unsigned int length = in->height * in->width;
 	unsigned int size = floor(length / n_threads);
 	unsigned int rest = length - size * (n_threads - 1);
 	unsigned int cur_x = 0;
@@ -123,10 +123,10 @@ void sobel(pam *in, pam *out, unsigned short n_threads)
 	// Padded input
 	pam padded = {0};
 
+	pad(in, &padded, 1);
+
 	free_pam(out);
 	init_pam(out, in->type, in->maxval, in->width, in->height);
-
-	pad(in, &padded, 1);
 
 	if (n_threads == 0)
 		n_threads = 1;
@@ -150,9 +150,9 @@ void sobel(pam *in, pam *out, unsigned short n_threads)
 		inputs[c].start_y = cur_y;
 		cur_x += size;
 		// Wrap the x position
-		while (cur_x >= out->width) {
+		while (cur_x >= in->width) {
 			++cur_y;
-			cur_x -= out->width;
+			cur_x -= in->width;
 		}
 	}
 

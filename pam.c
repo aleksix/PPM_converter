@@ -203,6 +203,8 @@ int copy(pam *in, pam *out, unsigned int force_copy, unsigned int offset_x, unsi
 
 	for (unsigned int y = 0; y < height; ++y)
 		memcpy(out->image[y + offset_y] + offset_x, in->image[y], width);
+
+	return 1;
 }
 
 int save_pam(const char *filename, const pam *out)
