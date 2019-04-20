@@ -112,7 +112,7 @@ int read_pam(const char *filename, pam *pam) {
 }
 
 int save_pam(const char *filename, const pam *pam) {
-    int fd = open(filename, O_RDWR | O_CREAT);
+    int fd = open(filename, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IROTH);
     if (fd == -1)
         return 0;
 
