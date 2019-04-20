@@ -55,7 +55,7 @@ unsigned long read_number(const int file_descriptor, unsigned int max_length) {
     } while (!isspace(c) && counter < max_length);
 
     buf[counter] = '\0';
-    out = strtol(buf, NULL, 10);
+    out = strtoul(buf, NULL, 10);
 
     free(buf);
 
@@ -83,8 +83,11 @@ int read_pam(const char *filename, pam *pam) {
     unsigned int width;
     unsigned int height;
     unsigned char maxval;
+    int error;
 
-    read(fd, magic, 2);
+    error = read(fd, magic, 2);
+    if (error == 0)
+        return 0;
 
     if (magic[0] == 'P') {
         // Get the type
@@ -104,7 +107,9 @@ int read_pam(const char *filename, pam *pam) {
     init_pam(pam, type, maxval, width, height);
     for (int c = 0; c < pam->height; ++c) {
         // TODO: ASCII FORMAT READING
-        read(fd, pam->image[c], pam->width * pam->bpp);
+        error = read(fd, pam->image[c], pam->width * pam->bpp);
+        if (error == 0)
+            return 0;
     }
 
     close(fd);
