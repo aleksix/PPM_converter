@@ -38,6 +38,8 @@ int pbm_2_pgm(pam *in, pam *out) {
             }
         }
     }
+
+    return 1;
 }
 
 int convert_2_pgm(pam *in, pam *out) {

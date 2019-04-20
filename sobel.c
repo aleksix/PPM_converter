@@ -96,7 +96,7 @@ void *sobel_thread(void *input) {
 //
 // Exported functions
 //
-int sobel(pam *in, pam *out, unsigned short n_threads) {
+void sobel(pam *in, pam *out, unsigned short n_threads) {
     free_pam(out);
     init_pam(out, in->type, in->maxval, in->width, in->height);
 

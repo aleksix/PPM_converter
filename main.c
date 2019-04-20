@@ -89,7 +89,11 @@ int main(int argc, char *argv[]) {
     }
 
     // Transform images to greyscale if they are not already grayscale
-    convert_2_pgm(&in, &greyscale);
+    result = convert_2_pgm(&in, &greyscale);
+    if (result == 0) {
+        printf("Error during conversion to greyscale: %s\n", strerror(errno));
+        return 1;
+    }
 
     // Call the sobel and calculate the time taken
     clock_gettime(CLOCK_REALTIME, &start);
