@@ -113,14 +113,15 @@ int main(int argc, char *argv[]) {
         nanoseconds += 1000000000;
         --seconds;
     }
-    printf("Sobel took %li seconds and %li nanoseconds\n", seconds, nanoseconds);
+    printf("Sobel algorithm took %li seconds and %li nanoseconds\n", seconds, nanoseconds);
 
     // Output the image
     save_pam(out_file, &sobel_out);
 
     // Release the resources
+    if (in.image != greyscale.image)
+        free_pam(&greyscale);
     free_pam(&in);
-    free_pam(&greyscale);
     free_pam(&sobel_out);
     return 0;
 }
