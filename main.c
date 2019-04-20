@@ -86,12 +86,12 @@ int main(int argc, char *argv[]) {
     result = read_pam(in_file, &in);
 
     if (result == 0) {
-        printf("Error during file loading: %s", strerror(errno));
+        printf("Error during file loading: %s\n", strerror(errno));
         return 1;
     }
 
-    if (in.type == PGM || in.type == PGM_BINARY) {
-        printf("PGM files not supported yet");
+    if (in.type == PBM || in.type == PBM_BINARY) {
+        printf("PBM files not supported yet\n");
         return 1;
     }
 
