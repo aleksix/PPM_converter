@@ -1,7 +1,6 @@
 #include "sobel.h"
 
 #include <math.h>
-#include <string.h>
 #include <pthread.h>
 #include <stdlib.h>
 

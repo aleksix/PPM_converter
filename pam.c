@@ -1,3 +1,5 @@
+#include "pam.h"
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -5,8 +7,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
-
-#include "pam.h"
 
 //
 // Reading helper functions
