@@ -43,11 +43,11 @@ void *sobel_thread(void *input) {
 
     double value_x;
     double value_y;
-    unsigned int current_y = info->start_y;
-    unsigned int current_x = info->start_x;
+    double magnitude;
+    unsigned int start_x = info->start_x;
 
-    for (unsigned int y = current_y; length > 0 && y < info->out->height; ++y, current_x = 0) {
-        for (unsigned int x = current_x; length > 0 && x < info->out->width; ++x, --length) {
+    for (unsigned int y = info->start_y; length > 0 && y < info->out->height; ++y, start_x = 0) {
+        for (unsigned int x = start_x; length > 0 && x < info->out->width; ++x, --length) {
             value_x = 0.0;
             value_y = 0.0;
             for (int i = -1; i <= 1; ++i) {
@@ -57,21 +57,24 @@ void *sobel_thread(void *input) {
                     value_y += kernely[i + 1][j + 1] * info->padded->image[y + i + 1][x + j + 1];
                 }
             }
-            info->out->image[y][x] = (unsigned char) sqrt(pow(value_x, 2) + pow(value_y, 2));
+            magnitude = sqrt(pow(value_x, 2) + pow(value_y, 2));
+            if (magnitude < 0)
+                magnitude = 0;
+            else if (magnitude > info->out->maxval)
+                magnitude = info->out->maxval;
+            info->out->image[y][x] = (unsigned char) magnitude;
         }
     }
 }
 
 int sobel(pam *in, pam *out, unsigned short n_threads) {
+    free_pam(out);
     out->maxval = 255;
     out->type = in->type;
     out->bpp = in->bpp;
     init_pam_image(out, in->width, in->height);
     pam padded = {0};
     pad(in, &padded, 1);
-
-    double value_x;
-    double value_y;
 
     if (n_threads == 0)
         n_threads = 1;
