@@ -26,7 +26,12 @@ int pbm_2_pgm(pam *in, pam *out) {
     for (unsigned int y = 0; y < in->height; ++y) {
         for (unsigned int x_in = 0; x_in < in->width; ++x_in) {
             for (unsigned int x_out = 0; x_out < 8; ++x_out) {
-                out->image[y][x_out + 8 * x_in] = ((in->image[y][x_in] & (128 >> x_out)) > 1) * 255;
+                // NOTE: kind of a potential hack/trick:
+                // (128 >> x_out) will give the bitmaks for a particular bit (number x_out in this_case)
+                // ANDing the value with the mask will tell us if the bit exists (it will be non-zero)
+                // The hack part: logic operations return 1 for true and 0 for false.
+                // So, the bit is checked, and if it is white, then we multiply it by 255 to get white in PGM
+                out->image[y][x_out + 8 * x_in] = ((in->image[y][x_in] & (128 >> x_out)) == 0) * 255;
             }
         }
     }
