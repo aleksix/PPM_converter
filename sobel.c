@@ -101,6 +101,8 @@ void *sobel_thread(void *input)
 			info->out->image[y][x] = (unsigned char) magnitude;
 		}
 	}
+
+	return NULL;
 }
 
 
