@@ -149,6 +149,25 @@ int read_pam(const char *filename, pam *out) {
     return 1;
 }
 
+int copy(pam *in, pam *out, unsigned int force_copy, unsigned int offset_x, unsigned int offset_y) {
+    unsigned int height = in->height;
+    unsigned int width = in->width;
+
+    if (force_copy) {
+        free_pam(out);
+        init_pam_image(out, in->width, in->height);
+    }
+
+    if (height > out->height - offset_y)
+        height = out->height - offset_y;
+    if (width > out->width - offset_x)
+        width = out->width - offset_x;
+
+    for (unsigned int y = 0; y < height; ++y) {
+        memcpy(out->image[y + offset_y] + offset_x, in->image[y], width);
+    }
+}
+
 int save_pam(const char *filename, const pam *pam) {
     int fd = open(filename, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IROTH);
     if (fd == -1)

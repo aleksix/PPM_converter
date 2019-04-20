@@ -31,9 +31,7 @@ void pad(pam *in, pam *out, unsigned short padding) {
     free_pam(out);
     init_pam_image(out, in->width + padding * 2, in->height + padding * 2);
 
-    for (unsigned int y = 0; y < in->height; ++y) {
-        memcpy(out->image[y + padding] + padding, in->image[y], in->width);
-    }
+    copy(in, out, 0, padding, padding);
 }
 
 

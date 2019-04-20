@@ -42,5 +42,5 @@ int convert_2_pgm(pam *in, pam *out) {
         return pbm_2_pgm(in, out);
     else if (in->type == PPM || in->type == PPM_BINARY)
         return ppm_2_pgm(in, out);
-    return 0;
+    return copy(in, out, 1, 0, 0);
 }

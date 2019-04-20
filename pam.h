@@ -36,6 +36,8 @@ void init_pam_image(pam *pam, const unsigned int width, const unsigned int heigh
 
 int read_pam(const char *filename, pam *out);
 
+int copy(pam *in, pam *out, unsigned int force_copy, unsigned int offset_x, unsigned int offset_y);
+
 int save_pam(const char *filename, const pam *pam);
 
 void free_pam(pam *pam);
