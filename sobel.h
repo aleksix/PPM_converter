@@ -5,6 +5,6 @@
 
 void pad(pam *in, pam *out, unsigned short padding);
 
-int sobel(pam *in, pam *out);
+int sobel(pam *in, pam *out, unsigned short n_threads);
 
 #endif //PPM_CONVERTER_SOBEL_H
