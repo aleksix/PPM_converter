@@ -99,9 +99,9 @@ int main(int argc, char *argv[])
 	}
 
 	// Call the sobel and calculate the time taken
-	clock_gettime(CLOCK_REALTIME, &start);
+	clock_gettime(CLOCK_MONOTONIC, &start);
 	sobel(&greyscale, &sobel_out, n_threads);
-	clock_gettime(CLOCK_REALTIME, &end);
+	clock_gettime(CLOCK_MONOTONIC, &end);
 
 	seconds = end.tv_sec - start.tv_sec;
 	nanoseconds = end.tv_nsec - start.tv_nsec;
