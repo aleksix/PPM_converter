@@ -172,4 +172,7 @@ void sobel(pam *in, pam *out, unsigned short n_threads)
 	// ..and wait for them
 	for (unsigned int c = 0; c < n_threads; ++c)
 		pthread_join(threads[c], NULL);
+
+	free(inputs);
+	free(threads);
 }
